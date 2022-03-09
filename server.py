@@ -2,6 +2,8 @@ import socket
 import sqlite3
 import threading
 import uuid
+import datetime
+import os
 
 # ------------------------------DATABASE----------------------------
 DB_PATH = 'database.db'
@@ -11,9 +13,11 @@ file_exists = os.path.exists(DB_PATH)
 db = sqlite3.connect(DB_PATH, check_same_thread=False, isolation_level=None)
 if not file_exists:
     cur = db.cursor()
-    cur.execute('CREATE TABLE obtained_data ('
-                'data_no TEXT,'
-                'data_value TEXT)')
+    cur.execute('CREATE TABLE sessions (UUID TEXT)')
+    cur.execute('CREATE TABLE CONVERSATIONS ('
+                'ID TEXT AUTO_INCREMENT PRIMARY KEY,'
+                'msg_1 TEXT,'
+                'msg_2 TEXT)')
     cur.close()
 
 
@@ -34,20 +38,27 @@ class Thread(threading.Thread):
     def _run(self):
         self.socket.setblocking(True)
 
-        data_no = 1
         while True:
             data_from_client = self.socket.recv(1024)
 
             print(data_from_client.decode())
 
-            try:
-                self.cursor.execute('INSERT INTO obtained_data (data_no, data_value) VALUES (?, ?)',
-                                    (data_no, data_from_client.decode()))
-            except sqlite3.IntegrityError:
-                self.cursor.execute('UPDATE obtained_data SET data_from_client.decode()=? WHERE data_no=?',
-                                    (data_no, data_from_client.decode()))
+            uuid_no = uuid.uuid4()
+            current_time = datetime.datetime.now()
+            ID = (uuid_no, current_time)
 
-            data_no += 1
+            try:
+                self.cursor.execute('INSERT INTO sessions (UUID) VALUES (?)',
+                                    uuid_no)
+            except sqlite3.IntegrityError:
+                self.cursor.execute('UPDATE sessions SET uuid_no=? WHERE uuid_no=?',
+                                    uuid_no)
+            try:
+                self.cursor.execute('INSERT INTO CONVERSATIONS (ID, msg_1, msg_2) VALUES (?, ?, ?)',
+                                    (ID, data_from_client, data_from_client))
+            except sqlite3.IntegrityError:
+                self.cursor.execute('UPDATE CONVERSATIONS SET uuid_no=? WHERE uuid_no=?',
+                                    uuid_no)
 
 
 # ------------------------------SERVER------------------------------
