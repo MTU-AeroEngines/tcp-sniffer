@@ -37,7 +37,7 @@ class Client(threading.Thread):
                 connections.remove(self)
                 self.close()
                 break
-            self.save_data(1, data)
+            self.save_data(1, data) # 1 - from client to the server
             self.socket.sendall(data)
             print(str(data.decode()))
 
