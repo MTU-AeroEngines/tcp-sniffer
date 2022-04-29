@@ -4,7 +4,10 @@ import time
 import select
 import uuid
 from database import cur
+import logging
 
+
+logger = logging.getLogger(__name__)
 TARGET_SOCK_ADDR = ('127.0.0.1', 8080)
 
 
@@ -30,11 +33,11 @@ class ChatServer(threading.Thread):
 
     def save_data(self, direction: int, data):
         cur.execute('INSERT INTO data (session_id, timestamp, direction, data) VALUES (?, ?, ?, ?)',
-                    (self.id, int(time.time()*1000000), direction, data))
+                    (self.id, int(time.time_ns()/1000), direction, data))
 
     def run(self):
         self.calypso_socket.connect(TARGET_SOCK_ADDR)
-        print("New connection " + str(TARGET_SOCK_ADDR) + " at ID " + str(self.id))
+        logger.warning('[NEW CONNECTION] New connection %s at ID %s', str(self.address), str(self.id))
         while self.signal:
             try:
                 rs, ws, xs = select.select((self.calypso_socket, self.facs_socket), (), ())
@@ -42,6 +45,7 @@ class ChatServer(threading.Thread):
                     if sock == self.facs_socket:
                         # Data incoming from the client
                         data = self.facs_socket.recv(1024)
+                        logger.warning('<CLIENT> %s', data.decode()))
                         if not data:
                             raise OSError('Socket error!')
                         # 0 -> from the client to the server
@@ -50,6 +54,7 @@ class ChatServer(threading.Thread):
                     else:
                         # Data incoming from the server
                         data = self.calypso_socket.recv(1024)
+                        logger.warning('<SERVER> %s', data.decode())
                         if not data:
                             raise OSError('Socket error!')
                         # 1 -> from the server to the client
@@ -57,7 +62,7 @@ class ChatServer(threading.Thread):
                         self.facs_socket.sendall(data)
             except (socket.error, IOError, OSError):
                 self.signal = False
-                print("Client " + str(TARGET_SOCK_ADDR) + " has disconnected\n")
+                logger.warning('[DISCONNECT] Client %s has been disconnected', str(self.address))
                 self.close()
                 break
 
@@ -69,14 +74,14 @@ def main():
     # Create new server socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.bind(LOCAL_BIND_ADDR)
-    print("Server is starting...")
+    logger.warning('[STARTING] Server is starting...')
 
     # Enables a server to accept connections
     sock.listen()
+    logger.warning('[LISTENING] Server is listening for connection...')
 
     while True:
         conn, addr = sock.accept()
-        print(f"Accepted connection request from ({addr[0]}, {addr[1]})")
 
         # Create new thread to handle the connections
         new_conn_thread = ChatServer(conn, addr, True)
