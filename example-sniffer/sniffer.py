@@ -5,6 +5,7 @@ import select
 import uuid
 from database import cur
 import logging
+import sys
 
 
 logger = logging.getLogger(__name__)
