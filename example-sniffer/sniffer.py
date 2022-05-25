@@ -46,7 +46,7 @@ class ChatServer(threading.Thread):
                     if sock == self.facs_socket:
                         # Data incoming from the client
                         data = self.facs_socket.recv(1024)
-                        logger.warning('<CLIENT> %s', data.decode()))
+                        logger.warning('<CLIENT> %s', data.decode())
                         if not data:
                             raise OSError('Socket error!')
                         # 0 -> from the client to the server
