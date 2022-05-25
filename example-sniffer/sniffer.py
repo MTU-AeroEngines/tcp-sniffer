@@ -8,7 +8,7 @@ import logging
 
 
 logger = logging.getLogger(__name__)
-TARGET_SOCK_ADDR = ('127.0.0.1', 8080)
+TARGET_SOCK_ADDR = sys.argv[2], int(sys.argv[3])
 
 
 class ChatServer(threading.Thread):
@@ -60,16 +60,16 @@ class ChatServer(threading.Thread):
                         # 1 -> from the server to the client
                         self.save_data(1, data)
                         self.facs_socket.sendall(data)
-            except (socket.error, IOError, OSError):
+            except (socket.error, IOError, OSError) as e:
                 self.signal = False
-                logger.warning('[DISCONNECT] Client %s has been disconnected', str(self.address))
+                logger.warning('[DISCONNECT] Client %s has been disconnected', str(self.address), exc_info=e)
                 self.close()
                 break
 
 
 def main():
 
-    LOCAL_BIND_ADDR = ('127.0.0.1', 8000)
+    LOCAL_BIND_ADDR = '0.0.0.0', int(sys.argv[1])
 
     # Create new server socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
