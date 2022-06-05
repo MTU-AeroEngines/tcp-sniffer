@@ -58,7 +58,7 @@ class ClientThread(threading.Thread):
 
     def save_data(self, direction: int, data) -> None:
         cur.execute('INSERT INTO data (session_id, timestamp, direction, data) VALUES (?, ?, ?, ?)',
-                    (self.session_id, int(time.time() * 1000000), direction, data))
+                    (self.session_id, time.time_ns() // 1000, direction, data))
 
     def loop(self):
         rs, ws, xs = select.select((self.server_socket, self.socket), (), ())
