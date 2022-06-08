@@ -42,7 +42,7 @@ class ChatServer(threading.Thread):
                 self.server_socket.connect(TARGET_SOCK_ADDR)
                 logger.warning('\n[NEW CONNECTION] New connection %s at ID %s\n', str(self.address), str(self.id))
                 break
-            except socket.error:
+            except (socket.error, IOError, OSError):
                 logger.warning('\n[WAITING] Waiting for the server to connect')
                 time.sleep(5)
                 if time.monotonic() - self.ts > 10:
