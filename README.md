@@ -1,13 +1,18 @@
-# tcp-sniffer
-A TCP sniffer that sniffs that relays the connection further and stores it's contents into a SQLite3 database
+# Example Sniffer
 
+An example of a TCP client-server socket created using Python's socket and threading library. 
+
+The **sniffer** uses instances of a ChatServer class and individual threads to listen to incoming data. 
+It sniffs the connection and saves it's content into a SQLite3 database.
+
+The **test/server.py** and the **test/client.py** are for the testing purpose. The communication between the **server** and the **client** is duplex (they receive and send messages). 
 
 How to use?
 ===========
 
-Just call the following:
+Call the following:
 ```bash
-python -m sniffer 8000 10.3.4.5 8080
+python -m sniffer 8000 127.0.0.1 8080
 ```
 
-This will fire up a local sniffer to sniff at port 8000, while handling off the connection to 10.3.4.5 port 8080.
+This will fire up a local sniffer to sniff at port 8000, while handling off the connection to 127.0.0.1 port 8080.
