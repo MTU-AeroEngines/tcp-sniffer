@@ -45,7 +45,7 @@ class ChatServer(threading.Thread):
             except (socket.error, IOError, OSError):
                 logger.warning('\n[WAITING] Waiting for the server to connect')
                 time.sleep(5)
-                if time.monotonic() - self.ts > 10:
+                if time.monotonic() - self.ts > 120:
                     logger.warning('\n[TIMEOUT] Connection closed. Server has not been connected')
                     self.close()
                     return
