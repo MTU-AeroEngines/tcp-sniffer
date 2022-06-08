@@ -1,6 +1,6 @@
 # Example Sniffer
 
-An example of a TCP client-server socket created using Python's socket and threading library. 
+A TCP client-server socket created using Python's socket and threading library. 
 
 The **sniffer** uses instances of a ChatServer class and individual threads to listen to incoming data. 
 It sniffs the connection and saves it's content into a SQLite3 database.
