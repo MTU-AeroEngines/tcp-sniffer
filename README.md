@@ -1,4 +1,4 @@
-# Example Sniffer
+# TCP Sniffer
 
 A TCP client-server socket created using Python's socket and threading library. 
 
