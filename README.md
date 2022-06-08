@@ -1,6 +1,6 @@
 # TCP Sniffer
 
-The **TCP sniffer** uses instances of a ChatServer class and individual threads to listen to the data sending between client and server. 
+The **TCP sniffer** listens to the data sending between client and server. 
 It sniffs the connection and saves it's content into a SQLite3 database.
 
 The **test-server.py** and the **test-client.py** are for the testing purpose. The communication between the **server** and the **client** is duplex (they receive and send messages). 
