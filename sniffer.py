@@ -34,7 +34,7 @@ class ChatServer(threading.Thread):
 
     def save_data(self, direction: int, data):
         cur.execute('INSERT INTO data (session_id, timestamp, direction, data) VALUES (?, ?, ?, ?)',
-                    (self.id, int(time.time_ns()//1000), direction, data))
+                    (self.id, time.time_ns()//1000, direction, data))
 
     def run(self):
         while True:
