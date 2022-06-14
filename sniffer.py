@@ -52,7 +52,7 @@ class ChatServer(threading.Thread):
 
     def save_data(self, direction: int, data):
         cur.execute('INSERT INTO data (session_id, timestamp, direction, data) VALUES (?, ?, ?, ?)',
-                    (self.id, time.time_ns()//1000, direction, data))
+                    (self.id, time.time_ns(), direction, data))
         db.commit()
 
     def run(self):
